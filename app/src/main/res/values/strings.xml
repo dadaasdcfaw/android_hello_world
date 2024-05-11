@@ -18,4 +18,5 @@
     <string name="count_button_text">ADD 1</string>
     <string name="random_heading">Here is a random number between 1 and %d.</string>
     <string name="reset_button_text">RESET TO 0</string>
+    <string name="button">button</string>
 </resources>
