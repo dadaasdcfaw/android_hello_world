@@ -32,5 +32,4 @@
         app:autoSizeStepGranularity="2sp"
         app:autoSizeTextType="uniform" />
 
-
 </RelativeLayout>
