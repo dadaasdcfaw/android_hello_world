@@ -5,10 +5,10 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import android.widget.RemoteViews
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import android.widget.RemoteViews
 
 class ButtonWidgetProvider : AppWidgetProvider() {
     override fun onEnabled(context: Context?) {
@@ -26,7 +26,13 @@ class ButtonWidgetProvider : AppWidgetProvider() {
             // Create an Intent to update the widget when clicked
             val intent = Intent(context, ButtonWidgetProvider::class.java)
             intent.action = "CLICK_ACTION"
-            val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            val pendingIntent = PendingIntent.getBroadcast(
+                /* context = */ context,
+                /* requestCode = */ appWidgetId,
+                /* intent = */ intent,
+                /* flags = */ PendingIntent.FLAG_UPDATE_CURRENT
+            )
 
             // Get the layout for the App Widget
             val views = RemoteViews(context.packageName, R.layout.widget_button)
@@ -43,17 +49,19 @@ class ButtonWidgetProvider : AppWidgetProvider() {
 
         // Check if the custom action is received
         if (intent.action == "CLICK_ACTION") {
+            val widgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
+
             // Restore original image when widget is not being clicked
             val views = RemoteViews(context.packageName, R.layout.widget_button)
             views.setImageViewResource(R.id.button_image, R.drawable.boton_pulsado) // Replace with your original image
             val appWidgetManager = AppWidgetManager.getInstance(context)
-            val thisWidget = ComponentName(context, ButtonWidgetProvider::class.java)
-            appWidgetManager.updateAppWidget(thisWidget, views)
+//            val thisWidget = ComponentName(context, ButtonWidgetProvider::class.java)
+            appWidgetManager.updateAppWidget(widgetId, views)
             // Schedule a timer to revert the image after a certain period of time
             Handler(Looper.getMainLooper()).postDelayed({
                 // Revert back to the original image
                 views.setImageViewResource(R.id.button_image, R.drawable.boton) // Change to the original image
-                appWidgetManager.updateAppWidget(thisWidget, views)
+                appWidgetManager.updateAppWidget(widgetId, views)
             }, 100) // Change 3000 to the desired duration in milliseconds (e.g., 3 seconds)
     }
     }
