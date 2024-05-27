@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/transparent">
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+
 
     <ImageView
         android:id="@+id/button_image"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="0.67"
         android:contentDescription="@string/button"
-        android:src="@drawable/boton" />
+        android:src="@drawable/boton"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:layout_gravity="center"
+        android:background="@drawable/border"
+        />
 
     <TextView
         android:id="@+id/counter_name"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:maxLines="2"
-        android:shadowColor="#000000"
-        android:shadowDx="0.0"
-        android:shadowDy="0.0"
-        android:shadowRadius="5.0"
+        android:layout_height="0dp"
+        android:layout_weight="0.33"
+        android:gravity="center"
         android:text="@string/default_widget_text"
-        android:textAlignment="center"
-        android:textColor="#FF597B"
-        android:textSize="30sp"
-        android:textStyle="bold"
-
+        android:maxLines="2"
         app:autoSizeMaxTextSize="100sp"
-        app:autoSizeMinTextSize="50sp"
+        app:autoSizeMinTextSize="30sp"
         app:autoSizeStepGranularity="2sp"
-        app:autoSizeTextType="uniform" />
+        app:autoSizeTextType="uniform"
+        android:background="@drawable/border" />
 
-</RelativeLayout>
+</LinearLayout>
