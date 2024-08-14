@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -7,8 +8,7 @@
     android:orientation="vertical"
     android:weightSum="1">
 
-
-
+    <!-- ImageView remains unchanged -->
     <ImageView
         android:id="@+id/button_image"
         android:layout_width="match_parent"
@@ -19,21 +19,41 @@
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:layout_gravity="center"
-        android:background="@drawable/border"
-        />
+        android:background="@drawable/border" />
 
-    <TextView
-        android:id="@+id/counter_name"
+    <!-- Horizontal LinearLayout to hold the TextView and Counter TextView -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.33"
-        android:gravity="center"
-        android:text="@string/default_widget_text"
-        android:maxLines="2"
-        app:autoSizeMaxTextSize="100sp"
-        app:autoSizeMinTextSize="30sp"
-        app:autoSizeStepGranularity="2sp"
-        app:autoSizeTextType="uniform"
-        android:background="@drawable/border" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/border">
+
+        <!-- TextView for the main text -->
+        <TextView
+            android:id="@+id/counter_name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/default_widget_text"
+            android:maxLines="2"
+            app:autoSizeMaxTextSize="100sp"
+            app:autoSizeMinTextSize="30sp"
+            app:autoSizeStepGranularity="2sp"
+            app:autoSizeTextType="uniform" />
+
+        <!-- TextView for the counter -->
+        <TextView
+            android:id="@+id/tap_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="0"
+            android:textSize="24sp"
+            android:padding="4dp"
+            />
+    </LinearLayout>
 
 </LinearLayout>

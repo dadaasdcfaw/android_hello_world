@@ -11,9 +11,23 @@ import android.util.Log
 import android.widget.RemoteViews
 
 class ButtonWidgetProvider : AppWidgetProvider() {
-    override fun onEnabled(context: Context?) {
-        super.onEnabled(context)
-        Log.d("???", "onEnabled")
+    companion object {
+        const val PREFS_NAME = "com.example.helloworld.ButtonWidgetProvider"
+        const val PREF_NAME_KEY = "name_"
+        const val PREF_COUNT_KEY = "count_"
+
+        // **NEW** Method to retrieve widget name
+        fun getWidgetName(context: Context, appWidgetId: Int): String {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+            // todo aqui hacer get del textview del nombre del boton
+            return prefs.getString(PREF_NAME_KEY + appWidgetId, "Widget $appWidgetId") ?: "Widget $appWidgetId"
+        }
+
+        fun getWidgetCount(context: Context, appWidgetId: Int): Int {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            return prefs.getInt(PREF_COUNT_KEY + appWidgetId, 0)
+        }
     }
 
     override fun onUpdate(
@@ -31,9 +45,8 @@ class ButtonWidgetProvider : AppWidgetProvider() {
                 /* context = */ context,
                 /* requestCode = */ appWidgetId,
                 /* intent = */ intent,
-                /* flags = */ PendingIntent.FLAG_UPDATE_CURRENT
+                /* flags = */ PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
-
             // Get the layout for the App Widget
             val views = RemoteViews(context.packageName, R.layout.widget_button)
 
@@ -42,6 +55,7 @@ class ButtonWidgetProvider : AppWidgetProvider() {
 
             // Tell the AppWidgetManager to perform an update on the current app widget
             appWidgetManager.updateAppWidget(appWidgetId, views)
+
         }
     }
     override fun onReceive(context: Context, intent: Intent) {
@@ -55,8 +69,21 @@ class ButtonWidgetProvider : AppWidgetProvider() {
             val views = RemoteViews(context.packageName, R.layout.widget_button)
             views.setImageViewResource(R.id.button_image, R.drawable.boton_pulsado) // Replace with your original image
             val appWidgetManager = AppWidgetManager.getInstance(context)
-//            val thisWidget = ComponentName(context, ButtonWidgetProvider::class.java)
             appWidgetManager.updateAppWidget(widgetId, views)
+
+            val prefs = context.getSharedPreferences(PREFS_NAME, 0)
+            val currentCount = prefs.getInt(PREF_COUNT_KEY + widgetId, 0)
+
+
+            // Increment the count by 1
+            val newCount = currentCount + 1
+            // Store the new count back to SharedPreferences
+            saveWidgetCount(context, widgetId, newCount)
+
+
+            views.setTextViewText(R.id.tap_counter, newCount.toString())
+            Log.d("ButtonWidgetProvider", "Updating widget ID $widgetId with count $currentCount")
+
             // Schedule a timer to revert the image after a certain period of time
             Handler(Looper.getMainLooper()).postDelayed({
                 // Revert back to the original image
@@ -73,5 +100,18 @@ class ButtonWidgetProvider : AppWidgetProvider() {
     override fun onDisabled(context: Context?) {
         super.onDisabled(context)
         Log.d("???", "onDisabled")
+    }
+    // **NEW** Method to save widget name
+    fun saveWidgetName(context: Context, appWidgetId: Int, name: String) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit()
+            .putString(PREF_NAME_KEY  + appWidgetId, name)
+            .apply()
+    }
+    fun saveWidgetCount(context: Context, appWidgetId: Int, count: Int) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit()
+            .putInt(PREF_COUNT_KEY  + appWidgetId, count)
+            .apply()
     }
 }
