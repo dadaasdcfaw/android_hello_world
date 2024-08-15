@@ -2,7 +2,6 @@ package com.example.helloworld
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
@@ -20,13 +19,30 @@ class ButtonWidgetProvider : AppWidgetProvider() {
         fun getWidgetName(context: Context, appWidgetId: Int): String {
             val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-            // todo aqui hacer get del textview del nombre del boton
-            return prefs.getString(PREF_NAME_KEY + appWidgetId, "Widget $appWidgetId") ?: "Widget $appWidgetId"
+            val default_value = R.string.default_widget_text.toString()
+            return prefs.getString(PREF_NAME_KEY + appWidgetId, default_value) ?: default_value
         }
 
         fun getWidgetCount(context: Context, appWidgetId: Int): Int {
             val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             return prefs.getInt(PREF_COUNT_KEY + appWidgetId, 0)
+        }
+        fun saveWidgetCount(context: Context, appWidgetId: Int, count: Int) {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            prefs.edit()
+                .putInt(PREF_COUNT_KEY  + appWidgetId, count)
+                .apply()
+
+
+            // Get the AppWidgetManager
+            val appWidgetManager = AppWidgetManager.getInstance(context)
+
+            // Get the layout for the App Widget
+            val views = RemoteViews(context.packageName, R.layout.widget_button)
+            views.setTextViewText(R.id.tap_counter, count.toString())
+
+            // Update the widget with the new RemoteViews
+            appWidgetManager.updateAppWidget(appWidgetId, views)
         }
     }
 
@@ -53,9 +69,15 @@ class ButtonWidgetProvider : AppWidgetProvider() {
             // Set the click listener to the button
             views.setOnClickPendingIntent(R.id.button_image, pendingIntent)
 
+            // Get current widget name stored in preferences.
+            val currWidgetName = getWidgetName(context, appWidgetId)
+            if (currWidgetName != R.string.default_widget_text.toString()) {
+                // And update it if different than default
+                views.setTextViewText(appWidgetId, currWidgetName)
+            }
+
             // Tell the AppWidgetManager to perform an update on the current app widget
             appWidgetManager.updateAppWidget(appWidgetId, views)
-
         }
     }
     override fun onReceive(context: Context, intent: Intent) {
@@ -101,17 +123,5 @@ class ButtonWidgetProvider : AppWidgetProvider() {
         super.onDisabled(context)
         Log.d("???", "onDisabled")
     }
-    // **NEW** Method to save widget name
-    fun saveWidgetName(context: Context, appWidgetId: Int, name: String) {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit()
-            .putString(PREF_NAME_KEY  + appWidgetId, name)
-            .apply()
-    }
-    fun saveWidgetCount(context: Context, appWidgetId: Int, count: Int) {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit()
-            .putInt(PREF_COUNT_KEY  + appWidgetId, count)
-            .apply()
-    }
+
 }
